@@ -12,7 +12,9 @@ const ClimaProvider = ({children}) => {
     })
 
     const [resultado, setResultado] = useState({});
-    
+    const [cargando, setCargando] = useState(false);
+    const [noResultado, setNoResultado] = useState(false)
+
     const datosBusqueda = e => {
         setBusqueda({
             ...busqueda,
@@ -21,6 +23,8 @@ const ClimaProvider = ({children}) => {
     }
 
     const consultarClima = async datos => {
+        setCargando(true)
+        setNoResultado(false)
         try {
             const {pais, ciudad } = datos
 
@@ -35,11 +39,13 @@ const ClimaProvider = ({children}) => {
 
             const { data: clima } = await axios(urlClima)
             setResultado(clima)
-            
+
         } catch (error) {
-            console.log(error)
-            
+            setNoResultado('No hay Resultados')
+        } finally {
+            setCargando(false)
         }
+
     }
 
     return (
@@ -48,7 +54,9 @@ const ClimaProvider = ({children}) => {
                 busqueda,
                 datosBusqueda,
                 consultarClima,
-                resultado
+                resultado,
+                cargando,
+                noResultado
             }}
         >
             {children}
